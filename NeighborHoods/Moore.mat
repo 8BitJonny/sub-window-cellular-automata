@@ -1,0 +1,64 @@
+# Created by Octave 6.1.0, Tue Jun 15 15:02:34 2021 CEST <jonny@JonnysMcBookPro.fritz.box>
+# name: neighborHood
+# type: cell
+# rows: 8
+# columns: 1
+# name: <cell-element>
+# type: matrix
+# rows: 1
+# columns: 2
+ -1 -1
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 1
+# columns: 2
+ -1 0
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 1
+# columns: 2
+ -1 1
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 1
+# columns: 2
+ 0 -1
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 1
+# columns: 2
+ 0 1
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 1
+# columns: 2
+ 1 -1
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 1
+# columns: 2
+ 1 0
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 1
+# columns: 2
+ 1 1
+
+
+
+
+

@@ -1,0 +1,96 @@
+# Created by Octave 6.1.0, Tue Jun 15 15:00:42 2021 CEST <jonny@JonnysMcBookPro.fritz.box>
+# name: rule
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 18
+# name: 0-0
+# type: scalar
+0
+
+
+# name: 0-1
+# type: scalar
+0
+
+
+# name: 1-0
+# type: scalar
+0
+
+
+# name: 1-1
+# type: scalar
+0
+
+
+# name: 2-0
+# type: scalar
+0
+
+
+# name: 2-1
+# type: scalar
+1
+
+
+# name: 3-0
+# type: scalar
+1
+
+
+# name: 3-1
+# type: scalar
+1
+
+
+# name: 4-0
+# type: scalar
+0
+
+
+# name: 4-1
+# type: scalar
+0
+
+
+# name: 5-0
+# type: scalar
+0
+
+
+# name: 5-1
+# type: scalar
+0
+
+
+# name: 6-0
+# type: scalar
+0
+
+
+# name: 6-1
+# type: scalar
+0
+
+
+# name: 7-0
+# type: scalar
+0
+
+
+# name: 7-1
+# type: scalar
+0
+
+
+# name: 8-0
+# type: scalar
+0
+
+
+# name: 8-1
+# type: scalar
+0
+
+
