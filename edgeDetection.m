@@ -1,33 +1,37 @@
 function [resultImg] = edgeDetection (img, ruleSet, neighborHood, subwindows)
+	ITERATIONS = 1;
+	figure(1);
+
 	% BASED ON SUBWINDOW/NEIGHBORHOOD SIZE -> BUILD PADDING AROUND IMAGE
 	biggestCoordOffset = abs(max(max(max(subwindows))));
 	img = extendWithBoundaryCondition(img, biggestCoordOffset);
 
-	iterations = 1;
 	nx = rows(img);
 	ny = columns(img);
 	newState = zeros(size(img));
 	subWindowState = zeros(size(img));
-	figure(1);
 
-	stringLookUp = "0123456789";
-	toString = @(num) stringLookUp(num+1);
+	% Start & Stop Conditions for the loops
+	xyStart = biggestCoordOffset+1;
+	xStop = nx - biggestCoordOffset;
+	yStop = ny - biggestCoordOffset;
 
 	countOfSubwindowElements = rows(subwindows);
-	countAlive = @(matrix) sum(matrix > 0);
-	calcSubwindowResults = @(img, subWindowIndexes, countOfSubwindowElements) round( countAlive(img(subWindowIndexes)) / countOfSubwindowElements );
+	baseNeighborHoodIndexes = calcIndexesFromCoords(xyStart, xyStart, ny, neighborHood);
+	baseSubWindowIndexes = calcIndexesFromCoords(xyStart, xyStart, ny, subwindows);
 
-	for iter = 1:iterations
-		for ix = biggestCoordOffset+1:(nx - biggestCoordOffset)
-			for iy = biggestCoordOffset+1:(ny - biggestCoordOffset)
-				neighborHoodIndexes = calcIndexesFromCoords(ix, iy, ny, neighborHood);
-				subWindowIndexes = calcIndexesFromCoords(ix, iy, ny, subwindows);
+	for iter = 1:ITERATIONS
+		for ix = xyStart:xStop
+			for iy = xyStart:yStop
+				indexOffset = ((iy - xyStart) * ny + (ix - xyStart));
+				subWindowIndexes = baseSubWindowIndexes + indexOffset;
+				neighborHoodIndexes = baseNeighborHoodIndexes + indexOffset;
 
 				subWindowState(subWindowIndexes(1,:,:)) = calcSubwindowResults(img, subWindowIndexes, countOfSubwindowElements);
 
 				nlive = countAlive(subWindowState(neighborHoodIndexes));
 
-				newState(ix, iy) = getfield(ruleSet, [toString(nlive) "-" toString(img(ix, iy))]);
+				newState(ix, iy) = getRuleResult(nlive, img(ix, iy), ruleSet);
 
 				% Reset SubWindowState
 				subWindowState(subWindowIndexes(1,:,:)) = 0;
@@ -36,7 +40,7 @@ function [resultImg] = edgeDetection (img, ruleSet, neighborHood, subwindows)
 
 		img = newState;
 		
-		% Comment out to not show intermediate results
+		%%% Comment out to not show intermediate results
 		% imshow(img);
 		% pause(0.2)
 
