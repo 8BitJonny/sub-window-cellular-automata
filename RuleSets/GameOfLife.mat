@@ -1,16 +1,6 @@
-# Created by Octave 6.1.0, Sun Jun 20 14:03:34 2021 CEST <jonny@JonnysMcBookPro.fritz.box>
+# Created by Octave 6.1.0, Wed Jun 23 12:30:12 2021 CEST <jonny@JonnysMcBookPro.fritz.box>
 # name: rule
-# type: matrix
-# rows: 9
-# columns: 2
- 0 0
- 0 0
- 0 1
- 1 1
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+# type: scalar
+224
 
 
