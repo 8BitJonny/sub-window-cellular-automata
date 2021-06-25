@@ -26,24 +26,22 @@ function [resultImg] = edgeDetection (img, rule, neighborHood, subwindows)
 	% Calculate all needed subwindow and neighborhood cell indexes based on the indexOffsetMatrix
 	neighborHoodIndexes = calculateNeighborHoodIndexes(neighborHood, indexOffsetMatrix, padded_img_width, padding);
 	subWindowIndexes = calculateSubwindowIndexes(subwindows, indexOffsetMatrix, padded_img_width, padding);
-	subWindowStateIndexes = calculateSubWindowStateIndexes(subWindowIndexes, padded_img_height, padded_img_width);
+	subWindowStateIndexes = calculateSubWindowStateIndexes(subWindowIndexes, IMG_HEIGHT, IMG_WIDTH, padded_img_dim);
 
 	% Pre Allocating Values
-	subWindowState = spalloc(padded_img_dim, padded_img_dim, padded_img_dim * N_SUBWINDOWS);
+	subWindowState = spalloc(padded_img_dim, IMG_WIDTH*IMG_HEIGHT, padded_img_dim * N_SUBWINDOWS);
 	cur_img_state = padded_img;
 	aliveNeighborMatrix = padded_img;
 
 	for iter = 1:ITERATIONS
 		% Calculate all N_SUBWINDOWS Subwindow States for each cell
 		subWindowState(subWindowStateIndexes) = calculateSubwindowResults(padded_img, subWindowIndexes, N_SUBWINDOW_PARTS);
-		
 		% Use the Subwindow States as a NeighborHood to count how many neighbor cells are alive for each cell
 		% The result is a 2D IMG_HEIGHT x IMG_WIDTH Matrix where each cell value is amount of alive neighbors
-		aliveNeighborMatrix = reshape(countAlive(subWindowState > 0), padded_img_height, padded_img_width);
+		aliveNeighborMatrix = reshape(countAlive(subWindowState > 0), IMG_HEIGHT, IMG_WIDTH);
 
 		% From N alive neighbor cells and the center cell's initial state, calculate the next state
-		% cur_img_state = getNextStateFn(aliveNeighborMatrix * 2 + padded_img + 1);
-		cur_img_state = getNextStateFn(aliveNeighborMatrix, padded_img);
+		cur_img_state = getNextStateFn(extendWithBoundaryCondition(aliveNeighborMatrix, padding), padded_img);
 		
 		%%% Comment out to not show intermediate results
 		% imshow(cur_img_state);
