@@ -61,5 +61,7 @@ function [resultImg] = edgeDetection (img, rule, neighborHood, subwindows, patte
 		% pause(0.2)
 
 	end % loop over iterations
-	resultImg = cur_img_state;
+
+	% Remove boundary condition
+	resultImg = cur_img_state(1+padding:IMG_WIDTH+padding, 1+padding:IMG_HEIGHT+padding);
 endfunction
