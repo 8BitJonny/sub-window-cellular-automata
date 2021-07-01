@@ -11,6 +11,10 @@
 % When querying what the next state should be, the following calculation gives us the bitIndex we need to look at
 %
 % Neighborhood Sum * 2 + Central pixel value + 1
-function result = configureGetNextStateFn (rule)
-	result = @(aliveNeighborMatrix, padded_img) bitget(rule, aliveNeighborMatrix * 2 + padded_img + 1);
+function result = configureGetNextStateFn (rule, MODE)
+	if (MODE == 'PATTERN_MODE')
+		result = @(patternIdMatrix) bitget(rule, patternIdMatrix + 1)
+	elseif (MODE == 'COUNT_MODE')
+		result = @(aliveNeighborMatrix, padded_img) bitget(rule, aliveNeighborMatrix * 2 + padded_img + 1)
+	endif
 endfunction
