@@ -1,8 +1,7 @@
 
 addpath ("./utils")
 
-% load "./RuleSets/GameOfLife.mat" rule
-rule = 84; % 1010100
+load "./RuleSets/PatternBased/TestPattern.mat" rule
 % Neighborhoods need to be defined from center outwards in a clockwise spiral
 load "./NeighborHoods/Moore.mat" neighborHood
 load "./SubWindows/PLRosin.mat" subwindows
