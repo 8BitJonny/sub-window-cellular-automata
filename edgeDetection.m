@@ -1,6 +1,6 @@
 function [resultImg] = edgeDetection (img, rule, neighborHood, subwindows, patternLookupTable = false)
 	% CONSTANTS
-	ITERATIONS = 1;
+	MAX_ITERATIONS = 100;
 	IMG_HEIGHT = rows(img);
 	IMG_WIDTH = columns(img);
 	IMG_DIM = IMG_WIDTH * IMG_HEIGHT;
@@ -35,25 +35,31 @@ function [resultImg] = edgeDetection (img, rule, neighborHood, subwindows, patte
 	% Pre Allocating Values
 	subWindowState = spalloc(padded_img_dim, IMG_WIDTH*IMG_HEIGHT, padded_img_dim * N_SUBWINDOWS);
 	cur_img_state = padded_img;
+	old_img_state = padded_img;
 	aliveNeighborMatrix = padded_img;
 
-	for iter = 1:ITERATIONS
+	for iter = 1:MAX_ITERATIONS
+		old_img_state = cur_img_state
 		% Calculate all N_SUBWINDOWS Subwindow States for each cell
 		subWindowState(subWindowStateIndexes) = calculateSubwindowResults(padded_img, subWindowIndexes, N_SUBWINDOW_PARTS);
 
 		if (MODE == 'PATTERN_MODE')
-			neighborHoodState = reshape(bin2dec(num2str([full(subWindowState(subWindowStateNeighborIndexes)) zeros(IMG_DIM,1)])), IMG_HEIGHT, IMG_WIDTH)
-			neighborHoodPatterns = patternLookupTable(neighborHoodState + 1)
+			neighborHoodState = reshape(bin2dec(num2str([full(subWindowState(subWindowStateNeighborIndexes)) zeros(IMG_DIM,1)])), IMG_HEIGHT, IMG_WIDTH);
+			neighborHoodPatterns = patternLookupTable(neighborHoodState + 1);
 
 			% From the neighborHoodPattern, calculate the next state
-			cur_img_state = getNextStateFn(extendWithBoundaryCondition(neighborHoodPatterns, padding));
+			cur_img_state = getNextStateFn(extendWithBoundaryCondition(neighborHoodPatterns, padding))
 		elseif (MODE == 'COUNT_MODE')
 			% Use the Subwindow States as a NeighborHood to count how many neighbor cells are alive for each cell
 			% The result is a 2D IMG_HEIGHT x IMG_WIDTH Matrix where each cell value is amount of alive neighbors
 			aliveNeighborMatrix = reshape(countAlive(subWindowState), IMG_HEIGHT, IMG_WIDTH);
 
 			% From N alive neighbor cells and the center cell's initial state, calculate the next state
-			cur_img_state = getNextStateFn(extendWithBoundaryCondition(aliveNeighborMatrix, padding), padded_img);
+			cur_img_state = getNextStateFn(extendWithBoundaryCondition(aliveNeighborMatrix, padding), padded_img)
+		endif
+		if (all(all(cur_img_state == old_img_state)))
+			breakAfterIter = iter - 1
+			break
 		endif
 		
 		%%% Comment out to not show intermediate results
