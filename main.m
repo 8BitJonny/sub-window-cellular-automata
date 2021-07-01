@@ -14,10 +14,13 @@ if (isbool(img))
 endif
 
 result = edgeDetection(img, rule, neighborHood, subwindows, patternLookupMatrix);
-figure(1);
+
+f = figure(1);
+set(f, "color", [0.3 0.3 0.3])
 imshow(result);
 title('Output');
 
-figure(2);
+f = figure(2);
+set(f, "color", [0.3 0.3 0.3])
 imshow(img);
 title('Input');
