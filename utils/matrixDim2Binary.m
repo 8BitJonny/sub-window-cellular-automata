@@ -1,6 +1,6 @@
-function result = matrixDim2Binary(matrix, outputDim = false)
+function result = matrixDim2Binary(matrix, output_dim = false)
 	result = bin2dec(num2str(matrix));
-	if (outputDim)
-		result = reshape(result, outputDim(1), outputDim(2));
+	if (output_dim)
+		result = reshape(result, output_dim(1), output_dim(2));
 	endif
 endfunction

@@ -1,7 +1,7 @@
-function subWindowStateIndexes = calculateSubWindowStateIndexes (subWindowIndexes, img_height, img_width, padded_img_dim)
+function sub_window_state_indexes = calculateSubWindowStateIndexes (sub_window_indexes, img_height, img_width, padded_img_dim)
 	img_dim = img_height * img_width;
-	indexMatrix = reshape(1:img_dim, img_height, img_width);
-	zeroIndexMatrix = indexMatrix - 1;
-	dimensionIndexOffsetMatrix = zeroIndexMatrix * padded_img_dim;
-	subWindowStateIndexes = subWindowIndexes(:,:,:,1) + dimensionIndexOffsetMatrix;
+	index_matrix = reshape(1:img_dim, img_height, img_width);
+	zero_index_matrix = index_matrix - 1;
+	dimension_index_offset_matrix = zero_index_matrix * padded_img_dim;
+	sub_window_state_indexes = sub_window_indexes(:,:,:,1) + dimension_index_offset_matrix;
 endfunction
