@@ -1,4 +1,4 @@
-
+pkg load image
 addpath ("./utils")
 
 load "./RuleSets/PatternBased/TestPattern.mat" rule
@@ -6,7 +6,7 @@ load "./RuleSets/PatternBased/TestPattern.mat" rule
 load "./NeighborHoods/Moore.mat" neighbor_hood
 load "./SubWindows/PLRosin.mat" sub_windows
 load "./ruleLookUpTable/MooreWithCenter.mat" pattern_lookup_matrix
-img = imread("./Images/blinker.png");
+img = imread("./Images/lena-binary.png");
 
 if (isbool(img))
 	img = im2double(img, "indexed");
@@ -14,12 +14,14 @@ endif
 
 result = edgeDetection(img, rule, neighbor_hood, sub_windows, pattern_lookup_matrix);
 
-f = figure(1);
-set(f, "color", [0.3 0.3 0.3])
-imshow(result);
-title('Output');
+cannyResult = edge(mat2gray(img), "Canny");
+sobelResult = edge(mat2gray(img), "Sobel");
+prewittResult = edge(mat2gray(img), "Sobel");
 
-f = figure(2);
-set(f, "color", [0.3 0.3 0.3])
-imshow(img);
-title('Input');
+plots_to_print.("Input") = img;
+plots_to_print.("Output") = result;
+plots_to_print.("Canny") = cannyResult;
+plots_to_print.("Sobel") = sobelResult;
+plots_to_print.("Prewitt") = prewittResult;
+
+plotResults(plots_to_print);
