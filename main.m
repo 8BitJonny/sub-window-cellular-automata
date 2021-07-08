@@ -18,9 +18,10 @@ cannyResult = edge(mat2gray(img), "Canny");
 sobelResult = edge(mat2gray(img), "Sobel");
 prewittResult = edge(mat2gray(img), "Sobel");
 
+plots_to_print = struct()
 plots_to_print.("Input") = img;
+plots_to_print.("Ground Truth") = cannyResult;
 plots_to_print.("Output") = result;
-plots_to_print.("Canny") = cannyResult;
 plots_to_print.("Sobel") = sobelResult;
 plots_to_print.("Prewitt") = prewittResult;
 
