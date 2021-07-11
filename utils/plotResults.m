@@ -5,7 +5,7 @@ function result = plotResults(plots_to_print)
 	plots_to_print_count = numfields(plots_to_print);
 	plots_per_row = 2;
 	plot_i = 0;
-	plot_rows = ceil((plots_to_print_count + 1) / plots_per_row)
+	plot_rows = ceil((plots_to_print_count + 1) / plots_per_row);
 	plot_cols = plots_per_row;
 
 	for [value, key] = plots_to_print
