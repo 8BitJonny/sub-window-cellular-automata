@@ -1,4 +1,5 @@
 function result = plotResults(plots_to_print)
+	clf;
 	f = figure(1);
 	set(f, "color", [0.3 0.3 0.3]);
 
