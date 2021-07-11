@@ -19,8 +19,8 @@ function result = plotResults(plots_to_print)
 	end;
 
 	% Plot Performance Measurement Graph
-	subplot (plot_rows, plot_cols, plot_i + 1, "color", "w");
-	hold on
+	subplot (plot_rows, plot_cols, plot_i + 1);
+	cla;
 	[sorted_performance, sorted_indexes] = sort(performance_measure);
 	h = barh(sorted_performance);
 	title("PFoM", "color", [1 1 1]);
