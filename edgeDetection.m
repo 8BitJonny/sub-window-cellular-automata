@@ -1,4 +1,4 @@
-function [result_img] = edgeDetection (img, rule, neighbor_hood, sub_windows, pattern_lookup_table = false)
+function [result_img] = edgeDetection (img, rule, neighbor_hood, sub_windows, pattern_lookup_table = false, debug = false)
 	% CONSTANTS
 	MAX_ITERATIONS = 100;
 	IMG_HEIGHT = rows(img);
@@ -52,15 +52,14 @@ function [result_img] = edgeDetection (img, rule, neighbor_hood, sub_windows, pa
 
 			% From the neighborHoodPattern, calculate the next state
 			cur_img_state = getNextStateFn(extendWithBoundaryCondition(neighbor_hood_pattern_ids, padding));
-		elseif (strcmp(MODE, 'COUNT_MODE'))
-			% Use the Subwindow States as a NeighborHood to count how many neighbor cells are alive for each cell
+		elseif (strcmp(MODE, 'COUNT_MODE'))			% Use the Subwindow States as a NeighborHood to count how many neighbor cells are alive for each cell
 			% The result is a 2D IMG_HEIGHT x IMG_WIDTH Matrix where each cell value is amount of alive neighbors
 			alive_neighbor_matrix = reshape(countAlive(sub_window_state), IMG_HEIGHT, IMG_WIDTH);
 
 			% From N alive neighbor cells and the center cell's initial state, calculate the next state
 			cur_img_state = getNextStateFn(extendWithBoundaryCondition(alive_neighbor_matrix, padding), padded_img);
 		endif
-		if (all(all(cur_img_state == old_img_state)))
+		if (all(all(cur_img_state == old_img_state)) && debug)
 			break_after_iter = iter - 1
 			break
 		endif
