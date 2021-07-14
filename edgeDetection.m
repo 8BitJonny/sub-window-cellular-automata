@@ -26,8 +26,8 @@ function [result_img] = edgeDetection (img, rule, neighbor_hood, sub_windows, pa
 	% Calculate the indexOffsetMatrix based on the img padding
 	index_offset_matrix = calculateIndexOffsetMatrix(padded_img_height, padded_img_width, padding);
 	% Calculate all needed subwindow and neighborhood cell indexes based on the indexOffsetMatrix
-	neighbor_hood_indexes = calculateNeighborHoodIndexes(neighbor_hood, index_offset_matrix, padded_img_width, padding);
-	sub_window_indexes = calculateSubwindowIndexes(sub_windows, index_offset_matrix, padded_img_width, padding);
+	neighbor_hood_indexes = calculateNeighborHoodIndexes(neighbor_hood, index_offset_matrix, padded_img_height, padding);
+	sub_window_indexes = calculateSubwindowIndexes(sub_windows, index_offset_matrix, padded_img_height, padding);
 	sub_window_state_indexes = calculateSubWindowStateIndexes(sub_window_indexes, IMG_HEIGHT, IMG_WIDTH, padded_img_dim);
 
 	sub_window_state_neighbor_indexes = calculateSubWindowStateNeighborIndexes(neighbor_hood_indexes, padded_img_dim);
