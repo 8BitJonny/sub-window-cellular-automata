@@ -10,11 +10,11 @@
 % it equals 224 and this is how the rule is passed around or stored.
 % When querying what the next state should be, the following calculation gives us the bitIndex we need to look at
 %
-% Neighborhood Sum * 2 + Central pixel value + 1
 function result = configureGetNextStateFn (rule, MODE)
 	if (strcmp(MODE, 'PATTERN_MODE'))
 		result = @(pattern_id_matrix) rule(pattern_id_matrix + 1);
 	elseif (strcmp(MODE, 'COUNT_MODE'))
+		% Neighborhood Sum * 2 + Central pixel value + 1
 		result = @(alive_neighbor_matrix, padded_img) bitget(rule, alive_neighbor_matrix * 2 + padded_img + 1);
 	endif
 endfunction
