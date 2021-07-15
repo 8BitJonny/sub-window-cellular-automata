@@ -37,4 +37,4 @@ plots_to_print.("Canny") = cannyResult;
 plots_to_print.("Sobel") = sobelResult;
 plots_to_print.("Prewitt") = prewittResult;
 
-plotResults(plots_to_print, true);
+plotResults(plots_to_print, 0);
