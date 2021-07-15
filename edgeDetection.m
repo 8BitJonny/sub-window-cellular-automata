@@ -42,7 +42,8 @@ function [result_img] = edgeDetection (img, rule, neighbor_hood, sub_windows, pa
 		old_img_state = cur_img_state;
 		% Calculate all N_SUBWINDOWS Subwindow States for each cell
 		% THIS LINE USING CUR_IMG BREAKS IN ITERATION 2 BECAUSE NO WITH AN EDGE MAP THE SUBWINDOW AGGREGATION CALCULATES ALL ZEROS
-		sub_window_state(sub_window_state_indexes) = calculateSubwindowResults(padded_img, sub_window_indexes, N_SUBWINDOW_PARTS);
+		[subwindow_results, non_zero_result_indexes] = calculateSubwindowResults(padded_img, sub_window_indexes, N_SUBWINDOW_PARTS, sub_window_state_indexes);
+		sub_window_state(sub_window_state_indexes(non_zero_result_indexes)) = subwindow_results(non_zero_result_indexes);
 
 		if (strcmp(MODE, 'PATTERN_MODE'))
 			cur_img_state_1d = reshape(stripPadding(cur_img_state, padding), IMG_DIM, 1);
