@@ -1,7 +1,7 @@
 %%%%%%%%%%
 %%%% SETUP
 pkg load image
-addpath([genpath("./utils") ":./performanceMeasurements"]);
+addpath(genpath("./utils"));
 clf;
 
 % Neighborhoods need to be defined from center outwards in a clockwise spiral
