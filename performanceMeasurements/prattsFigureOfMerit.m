@@ -1,17 +1,18 @@
-% Taken from https://de.mathworks.com/matlabcentral/fileexchange/60473-pratt-s-figure-of-merit
-%
-% Edge detector performance measure function. 
-% Calculates for a given edge image the false alarm 
-% count, miss count and figure of merit (F) values.   		 	
-%  
-%    Input(s)... Ea : Actual edge image     	
-%		 Ed : Detected edge image.
-%
-%    Output(s).. fac: False alarm count
-%		 msc: miss count
-%		 F  : Figure of merit
-%
-function F = figureOfMerit(Ea,Ed)
+% Vivek Bhadouria (2021).
+% Pratt's Figure of Merit
+% (https://www.mathworks.com/matlabcentral/fileexchange/60473-pratt-s-figure-of-merit),
+% MATLAB Central File Exchange. Retrieved July 14, 2021.
+function F = prattsFigureOfMerit(Ea,Ed)
+	% Edge detector performance measure function. 
+	% Calculates for a given edge image the false alarm 
+	% count, miss count and figure of merit (F) values.   		 	
+	%  
+	%    Input(s)... Ea : Actual edge image     	
+	%		 Ed : Detected edge image.
+	%
+	%    Output(s).. fac: False alarm count
+	%		 msc: miss count
+	%		 F  : Figure of merit
 	Ea=double(Ea);
 	Ed=double(Ed);
 	[N,M]=size(Ea);
