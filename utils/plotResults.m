@@ -2,6 +2,9 @@ function result = plotResults(plots_to_print, fast = false)
 	clf;
 	f = figure(1);
 	set(f, "color", [0.3 0.3 0.3]);
+	set(0, "defaulttextcolor", "white");
+	set(0, "defaultaxesycolor", "white");
+	set(0, "defaultaxesxcolor", "white");
 
 	performances_to_print_count = ternary(fast, 2, 3);
 	plots_to_print_count = numfields(plots_to_print);
@@ -14,38 +17,40 @@ function result = plotResults(plots_to_print, fast = false)
 		plot_i = plot_i + 1;
 		subplot (plot_rows, plot_cols, plot_i);
 		imshow(value);
-		title(key, "color", [1 1 1]);
+		title(key);
 	end
 
-	[pratts_FoM root_mean_square_errors peak_signal_to_noise_ratio] = deal(zeros(0));
 	% Calculate Performance
+	[pratts_FoM root_mean_square_errors peak_signal_to_noise_ratio] = deal(zeros(0));
+	ground_truth = plots_to_print.("Ground Truth");
 	for [value, key] = plots_to_print
 		if (!strcmp(key, "Input") && !strcmp(key, "Ground Truth"))
+			root_mean_square_errors(end+1) = rmse(value, ground_truth);
+			peak_signal_to_noise_ratio(end+1) = psnr(value, ground_truth);
 			if (!fast)
-				pratts_FoM(end+1) = prattsFigureOfMerit(plots_to_print.("Ground Truth"), value);
+				pratts_FoM(end+1) = prattsFigureOfMerit(ground_truth, value);
 			end
-			root_mean_square_errors(end+1) = rmse(value, plots_to_print.("Ground Truth"));
-			peak_signal_to_noise_ratio(end+1) = psnr(value, plots_to_print.("Ground Truth"));
 		endif
 	end
 
-	performances_to_print = struct();
-	performances_to_print.("RMSE") = root_mean_square_errors;
-	performances_to_print.("PSNR") = peak_signal_to_noise_ratio;
-	performances_to_print.("PFoM") = pratts_FoM;
+	performances_to_print = struct(
+		"RMSE", root_mean_square_errors,
+		"PSNR", peak_signal_to_noise_ratio,
+		"PFoM", pratts_FoM
+	);
 
 	% Plot performance Graph
-	white_labels = @(labels, fn, parser) fn (@(x) sprintf (["\\color{white}{" parser "}"], x), labels, "uniformoutput", false);
 	for [value, key] = performances_to_print
 		if (fast && strcmp(key, "PFoM"))
 			continue
 		endif
+		sorting_direction = ternary(strcmp(key, "RMSE"), "descend", "ascend");
+		[sorted_performance, sorted_indexes] = sort(value, sorting_direction);
+
 		plot_i = plot_i + 1;
 		subplot (plot_rows, plot_cols, plot_i);
-		[sorted_performance, sorted_indexes] = sort(value);
-		h = barh(sorted_performance);
-		title(key, "color", [1 1 1]);
-		set(gca, "yTickLabel", white_labels(fieldnames(plots_to_print)(3:end)(sorted_indexes,:), @cellfun, "%s"))
-		set(gca, "xTickLabel", white_labels(get(gca, "XTick"), @arrayfun, "%.2f"))
+		barh(sorted_performance);
+		title(key);
+		set(gca, "yTickLabel", fieldnames(plots_to_print)(3:end)(sorted_indexes,:))
 	end
 endfunction
