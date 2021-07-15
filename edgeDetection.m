@@ -59,8 +59,10 @@ function [result_img] = edgeDetection (img, rule, neighbor_hood, sub_windows, pa
 			% From N alive neighbor cells and the center cell's initial state, calculate the next state
 			cur_img_state = getNextStateFn(extendWithBoundaryCondition(alive_neighbor_matrix, padding), padded_img);
 		endif
-		if (all(all(cur_img_state == old_img_state)) && debug)
-			break_after_iter = iter - 1
+		if (all(all(cur_img_state == old_img_state)))
+			if (debug)
+				break_after_iter = iter - 1
+			endif
 			break
 		endif
 
