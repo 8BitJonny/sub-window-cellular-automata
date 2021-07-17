@@ -9,7 +9,6 @@ function [result_img] = edgeDetection (img, rule, neighbor_hood, sub_windows, pa
 	MODE = ternary(!isbool(pattern_lookup_table), "PATTERN_MODE", "COUNT_MODE");
 
 	%%% SETUP
-	figure(1);
 	getNextStateFn = configureGetNextStateFn(rule, MODE);
 
 	% BASED ON SUBWINDOW/NEIGHBORHOOD SIZE -> BUILD PADDING AROUND IMAGE
