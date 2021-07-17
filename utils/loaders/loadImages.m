@@ -10,7 +10,7 @@ function images = loadImages(images_path, max_matches_per_pattern = 1)
 			if (max(max(img)) > 1)
 				img = im2bw(img);
 			endif
-			if (isbool(img))
+			if (!isa(img, 'double'))
 				img = im2double(img, "indexed");
 			endif
 			images{end+1} = img;
