@@ -2,9 +2,9 @@
 %%%% SETUP
 setup();
 
-progress_bar = waitbar(0);
 FAST = 0;
-IMGS_TO_TEST = 5;
+IMGS_TO_TEST = 200;
+progress_bar = progressBar(IMGS_TO_TEST, "Loading");
 
 % Neighborhoods need to be defined from center outwards in a clockwise spiral
 load "./NeighborHoods/Moore.mat" neighbor_hood
@@ -20,6 +20,9 @@ imgs = loadImages({"TrainingSet/*"}, IMGS_TO_TEST);
 tic;
 results = {};
 for i = 1:length(imgs)
+	if (getappdata (progress_bar, "interrupt"))
+    	return
+   	endif
 	img = imgs{i};
 
 	% Calculate Ground Truth	
@@ -50,16 +53,16 @@ for i = 1:length(imgs)
 		"Sobel", sobelResult,
 		"Prewitt", prewittResult
 	);
-	waitbar (i / (length(imgs) * 2), progress_bar, "Edge Detection");
+	progressBar(i, "Edge Detection");
 endfor
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%% PERFORMANCE CALCULATION
-performance = calculatePerformance(results, progress_bar, FAST);
+performance = calculatePerformance(results, FAST);
 
 time = toc();
-waitbar (1, progress_bar, ["Took " sprintf("%0.2f", time) "s in total (" sprintf("%0.2f", time/IMGS_TO_TEST) "s per IMG)"])
+progress_bar = progressBar(IMGS_TO_TEST*2, ["Took " sprintf("%0.2f", time) "s in total (" sprintf("%0.2f", time/IMGS_TO_TEST) "s per IMG)"]);
 
 %%%%%%%%%%%%%%%%%%%%
 %%%% RESULT PRINTING
-plotResults(results{2}, performance);
+plotResults(results{1}, performance);
