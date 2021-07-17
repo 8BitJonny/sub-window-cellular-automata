@@ -1,9 +1,6 @@
 function result = plotResults(plots_to_print, performances_to_print)
 	clf;
 	f = figure(1);
-	set(0, "defaulttextcolor", "white");
-	set(0, "defaultaxesycolor", "white");
-	set(0, "defaultaxesxcolor", "white");
 
 	performances_to_print_count = numfields(performances_to_print);
 	plots_to_print_count = numfields(plots_to_print);

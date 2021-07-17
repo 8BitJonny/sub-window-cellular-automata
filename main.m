@@ -1,12 +1,10 @@
 %%%%%%%%%%
 %%%% SETUP
-pkg load image
-addpath(genpath("./utils"));
-set(0, "defaultfigurecolor", [0.3 0.3 0.3]);
-clf;
+setup();
+
 progress_bar = waitbar(0);
 FAST = 0;
-IMGS_TO_TEST = 20;
+IMGS_TO_TEST = 5;
 
 % Neighborhoods need to be defined from center outwards in a clockwise spiral
 load "./NeighborHoods/Moore.mat" neighbor_hood
@@ -18,7 +16,7 @@ imgs = loadImages({"TrainingSet/*"}, IMGS_TO_TEST);
 % imgs = loadImages({"apple-1", "bat-1", "beetle-6", "butterfly-20", "elephant-1"});
 
 %%%%%%%%%%%%%%%%%
-%%%% CALCULATIONS
+%%%% EDGE DETECTION
 tic;
 results = {};
 for i = 1:length(imgs)
@@ -55,43 +53,13 @@ for i = 1:length(imgs)
 	waitbar (i / (length(imgs) * 2), progress_bar, "Edge Detection");
 endfor
 
-algorithms = fieldnames(results{1})(!cellfun(@(x) (strcmp(x, "Input") || strcmp(x, "Ground Truth")), fieldnames(results{1})));
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% PERFORMANCE CALCULATION
+performance = calculatePerformance(results, progress_bar, FAST);
 
-%%%%%%%%%%%%%%
-%%%% PERF CALC
-[pratts_FoM root_mean_square_errors peak_signal_to_noise_ratio] = deal(struct());
-for i = 1:length(results)
-	ground_truth = results{i}.("Ground Truth");
-	for algo_i = 1:numel(algorithms)
-		key = algorithms{algo_i};
-		value = results{i}.(key);
-		if (i == 1)
-			[pratts_FoM.(key) root_mean_square_errors.(key) peak_signal_to_noise_ratio.(key)] = deal(zeros(0));
-		endif
-		root_mean_square_errors.(key)(end+1) = rmse(value, ground_truth);
-		peak_signal_to_noise_ratio.(key)(end+1) = psnr(value, ground_truth);
-		if (!FAST)
-			pratts_FoM.(key)(end+1) = prattsFigureOfMerit(ground_truth, value);
-		end
-	end
-	waitbar ((length(imgs) + i) / (length(results) * 2), progress_bar, "Calc Performance")
-endfor
 time = toc();
 waitbar (1, progress_bar, ["Took " sprintf("%0.2f", time) "s in total (" sprintf("%0.2f", time/IMGS_TO_TEST) "s per IMG)"])
 
-mean_performances = structfun(
-	@(y) structfun( @(x) mean(x), y, "UniformOutput", false),
-	struct(
-		"PFoM", pratts_FoM,
-		"RMSE", root_mean_square_errors,
-		"PSNR", peak_signal_to_noise_ratio
-	), "UniformOutput", false
-);
-
-if (FAST)
-	mean_performances = rmfield(mean_performances, 'PFoM')
-end
-
 %%%%%%%%%%%%%%%%%%%%
 %%%% RESULT PRINTING
-plotResults(results{2}, mean_performances);
+plotResults(results{2}, performance);
