@@ -6,6 +6,7 @@ set(0, "defaultfigurecolor", [0.3 0.3 0.3]);
 clf;
 progress_bar = waitbar(0);
 FAST = 0;
+IMGS_TO_TEST = 20;
 
 % Neighborhoods need to be defined from center outwards in a clockwise spiral
 load "./NeighborHoods/Moore.mat" neighbor_hood
@@ -13,11 +14,12 @@ load "./ruleLookUpTable/MooreWithCenter.mat" pattern_lookup_matrix
 [gT_simple_rule, otca_832_rule] = loadRules({"C/Ground_Truth_Simple", "C/OTCA832"});
 [rosin_sub_window, no_effect_sub_window] = loadSubwindows({"PLRosin", "NoEffect"});
 
-imgs = loadImages({"apple-1", "bat-1", "beetle-6", "butterfly-20", "elephant-1"});
-imgs = {imgs.("apple-1"), imgs.("bat-1")};
+imgs = loadImages({"TrainingSet/*"}, IMGS_TO_TEST);
+% imgs = loadImages({"apple-1", "bat-1", "beetle-6", "butterfly-20", "elephant-1"});
 
 %%%%%%%%%%%%%%%%%
 %%%% CALCULATIONS
+tic;
 results = {};
 for i = 1:length(imgs)
 	img = imgs{i};
@@ -34,7 +36,7 @@ for i = 1:length(imgs)
 	% Apply proposed method
 	sub_window_otca_result = edgeDetection(img, otca_832_rule, neighbor_hood, rosin_sub_window);
 	% Denoise for State of the art methods
-	denoised_img = mat2gray(im2bw (imsmooth(img, "P&M")));
+	denoised_img = im2double(mat2gray(im2bw (imsmooth(img, "P&M"))));
 	% Apply state of the art methods
 	cannyResult = edge(denoised_img, "Canny");
 	sobelResult = edge(denoised_img, "Sobel");
@@ -50,7 +52,7 @@ for i = 1:length(imgs)
 		"Sobel", sobelResult,
 		"Prewitt", prewittResult
 	);
-	waitbar (i / length(imgs), progress_bar, "Edge Detection");
+	waitbar (i / (length(imgs) * 2), progress_bar, "Edge Detection");
 endfor
 
 algorithms = fieldnames(results{1})(!cellfun(@(x) (strcmp(x, "Input") || strcmp(x, "Ground Truth")), fieldnames(results{1})));
@@ -72,8 +74,10 @@ for i = 1:length(results)
 			pratts_FoM.(key)(end+1) = prattsFigureOfMerit(ground_truth, value);
 		end
 	end
-	waitbar (i / length(results), progress_bar, "Calc Performance")
+	waitbar ((length(imgs) + i) / (length(results) * 2), progress_bar, "Calc Performance")
 endfor
+time = toc();
+waitbar (1, progress_bar, ["Took " sprintf("%0.2f", time) "s in total (" sprintf("%0.2f", time/IMGS_TO_TEST) "s per IMG)"])
 
 mean_performances = structfun(
 	@(y) structfun( @(x) mean(x), y, "UniformOutput", false),
@@ -82,7 +86,7 @@ mean_performances = structfun(
 		"RMSE", root_mean_square_errors,
 		"PSNR", peak_signal_to_noise_ratio
 	), "UniformOutput", false
-)
+);
 
 if (FAST)
 	mean_performances = rmfield(mean_performances, 'PFoM')
