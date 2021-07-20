@@ -1,31 +1,26 @@
-function result = calculatePerformance(edge_detection_results, FAST = 0)
-	algorithms = fieldnames(
-		edge_detection_results{1}
-	)(!cellfun(
-		@(x) (strcmp(x, "Input") || strcmp(x, "Ground Truth")),
-		fieldnames(edge_detection_results{1})
-	));
+function result = calculatePerformance(edge_detection_results, empty_performance_results, detection_speeds, FAST = 0)
+	algorithms = fieldnames(empty_performance_results);
 	progress_bar = progressBar(length(edge_detection_results), "Calc Performance");
+
+	baddeleys_delta_params = struct("wFunc", "x", "kPower", 2, "dist", "euc");
 
 	%%%%%%%%%%%%%%
 	%%%% PERF CALC
-	[pratts_FoM root_mean_square_errors peak_signal_to_noise_ratio] = deal(struct());
+	[pratts_FoM root_mean_square_errors peak_signal_to_noise_ratio baddeleys_delta_metric] = deal(empty_performance_results);
 	for i = 1:length(edge_detection_results)
 		ground_truth = edge_detection_results{i}.("Ground Truth");
 		for algo_i = 1:numel(algorithms)
 			if (getappdata (progress_bar, "interrupt"))
+				setappdata (progress_bar, "interrupt", false);
     			return
    			endif
 			key = algorithms{algo_i};
 			value = edge_detection_results{i}.(key);
-			if (i == 1)
-				[pratts_FoM.(key) root_mean_square_errors.(key) peak_signal_to_noise_ratio.(key)] = deal(zeros(0));
-			endif
-			
-			root_mean_square_errors.(key)(end+1) = rmse(value, ground_truth);
-			peak_signal_to_noise_ratio.(key)(end+1) = psnr(value, ground_truth);
+			root_mean_square_errors.(key)(i) = rmse(value, ground_truth);
+			peak_signal_to_noise_ratio.(key)(i) = psnr(value, ground_truth);
+			baddeleys_delta_metric.(key)(i) = BDM(ground_truth, value, baddeleys_delta_params);
 			if (!FAST)
-				pratts_FoM.(key)(end+1) = prattsFigureOfMerit(ground_truth, value, true);
+				pratts_FoM.(key)(i) = prattsFigureOfMerit(ground_truth, value, true);
 			end
 		end
 		progressBar(length(edge_detection_results) + i, "Calc Performance");
@@ -36,7 +31,9 @@ function result = calculatePerformance(edge_detection_results, FAST = 0)
 		struct(
 			"PFoM", pratts_FoM,
 			"RMSE", root_mean_square_errors,
-			"PSNR", peak_signal_to_noise_ratio
+			"PSNR", peak_signal_to_noise_ratio,
+			% "Execution Time", detection_speeds
+			"BDM", baddeleys_delta_metric
 		), "UniformOutput", false
 	);
 

@@ -13,8 +13,10 @@
 function result = configureGetNextStateFn (rule, MODE)
 	if (strcmp(MODE, 'PATTERN_MODE'))
 		result = @(pattern_id_matrix) rule(pattern_id_matrix + 1);
-	elseif (strcmp(MODE, 'COUNT_MODE'))
+	elseif (strcmp(MODE, 'COUNT_MODE_OTCA'))
 		% Neighborhood Sum * 2 + Central pixel value + 1
 		result = @(alive_neighbor_matrix, padded_img) bitget(rule, alive_neighbor_matrix * 2 + padded_img + 1);
+	elseif (strcmp(MODE, 'COUNT_MODE_TCA'))	
+		result = @(alive_neighbor_matrix, padded_img) bitget(rule, alive_neighbor_matrix + padded_img + 1);
 	endif
 endfunction
