@@ -3,13 +3,13 @@
 setup();
 
 FAST = 0;
-IMGS_TO_TEST = 200;
+IMGS_TO_TEST = 20;
 progress_bar = progressBar(IMGS_TO_TEST, "Loading");
 
 % Neighborhoods need to be defined from center outwards in a clockwise spiral
 load "./NeighborHoods/Moore.mat" neighbor_hood
 load "./ruleLookUpTable/MooreWithCenter.mat" pattern_lookup_matrix
-[gT_simple_rule, otca_832_rule] = loadRules({"C/Ground_Truth_Simple", "C/OTCA832"});
+[gT_simple_rule, otca_832_rule, tca_112_rule] = loadRules({"C/Ground_Truth_Simple", "C/OTCA832", "C/TCA112"});
 [rosin_sub_window, no_effect_sub_window] = loadSubwindows({"PLRosin", "NoEffect"});
 
 imgs = loadImages({"TrainingSet/*"}, IMGS_TO_TEST);
