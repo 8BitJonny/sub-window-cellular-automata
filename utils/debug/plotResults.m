@@ -1,4 +1,4 @@
-function result = plotResults(plots_to_print, performances_to_print)
+function result = plotResults(plots_to_print, performances_to_print, flip_colors = true)
 	clf;
 	f = figure(1);
 
@@ -11,8 +11,8 @@ function result = plotResults(plots_to_print, performances_to_print)
 
 	for [value, key] = plots_to_print
 		plot_i = plot_i + 1;
-		subplot (plot_rows, plot_cols, plot_i);
-		imshow(value);
+		subplot(plot_rows, plot_cols, plot_i);
+		imshow(value == !flip_colors);
 		title(key);
 	end
 
