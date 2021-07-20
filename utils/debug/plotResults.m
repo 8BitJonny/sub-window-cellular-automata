@@ -20,7 +20,7 @@ function result = plotResults(plots_to_print, performances_to_print, flip_colors
 	for [value, key] = performances_to_print
 		labels = fieldnames(value);
 		value = [struct2cell(value){:}];
-		sorting_direction = ternary(strcmp(key, "RMSE"), "descend", "ascend");
+		sorting_direction = ternary(strcmp(key, "RMSE") || strcmp(key, "BDM"), "descend", "ascend");
 		[sorted_performance, sorted_indexes] = sort(value, sorting_direction);
 
 		plot_i = plot_i + 1;
