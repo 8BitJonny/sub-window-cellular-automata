@@ -28,5 +28,7 @@ function result = plotResults(plots_to_print, performances_to_print, flip_colors
 		barh(sorted_performance);
 		title(key);
 		set(gca, "yTickLabel", labels(sorted_indexes,:))
+		daspect("manual")
+		daspect(daspect() .* [0.7 1 1])
 	end
 endfunction
