@@ -1,6 +1,6 @@
-function [result_img] = edgeDetection (img, rule, neighbor_hood, sub_windows, MODE, pattern_lookup_table = false, debug = false)
+function [result_img] = edgeDetection (img, rule, neighbor_hood, sub_windows, MODE, pattern_lookup_table = false, debug = false, MAX_ITERATIONS = 1)
 	% CONSTANTS
-	MAX_ITERATIONS = 100;
+	[no_effect_sub_window] = loadSubwindows({"NoEffect"});
 	IMG_HEIGHT = rows(img);
 	IMG_WIDTH = columns(img);
 	IMG_DIM = IMG_WIDTH * IMG_HEIGHT;
@@ -26,7 +26,9 @@ function [result_img] = edgeDetection (img, rule, neighbor_hood, sub_windows, MO
 	% Calculate all needed subwindow and neighborhood cell indexes based on the indexOffsetMatrix
 	neighbor_hood_indexes = calculateNeighborHoodIndexes(neighbor_hood, index_offset_matrix, padded_img_height, padding);
 	sub_window_indexes = calculateSubwindowIndexes(sub_windows, index_offset_matrix, padded_img_height, padding);
+	no_effect_sub_window_indexes = calculateSubwindowIndexes(no_effect_sub_window, index_offset_matrix, padded_img_height, padding);
 	sub_window_state_indexes = calculateSubWindowStateIndexes(sub_window_indexes, IMG_HEIGHT, IMG_WIDTH, padded_img_dim);
+	no_effect_sub_window_state_indexes = calculateSubWindowStateIndexes(no_effect_sub_window_indexes, IMG_HEIGHT, IMG_WIDTH, padded_img_dim);
 
 	sub_window_state_neighbor_indexes = calculateSubWindowStateNeighborIndexes(neighbor_hood_indexes, padded_img_dim);
 
@@ -40,7 +42,16 @@ function [result_img] = edgeDetection (img, rule, neighbor_hood, sub_windows, MO
 		old_img_state = cur_img_state;
 		% Calculate all N_SUBWINDOWS Subwindow States for each cell
 		% THIS LINE USING CUR_IMG BREAKS IN ITERATION 2 BECAUSE NO WITH AN EDGE MAP THE SUBWINDOW AGGREGATION CALCULATES ALL ZEROS
-		[subwindow_results, non_zero_result_indexes] = calculateSubwindowResults(padded_img, sub_window_indexes, N_SUBWINDOW_PARTS, sub_window_state_indexes);
+		if (iter == 1)
+			sub_window_indexes_to_be_used = sub_window_indexes;
+			sub_window_state_indexes_to_be_used = sub_window_state_indexes;
+			sub_window_parts = N_SUBWINDOW_PARTS;
+		else
+			sub_window_indexes_to_be_used = no_effect_sub_window_indexes;
+			sub_window_state_indexes_to_be_used = no_effect_sub_window_state_indexes;
+			sub_window_parts = 1;
+		endif
+		[subwindow_results, non_zero_result_indexes] = calculateSubwindowResults(cur_img_state, sub_window_indexes_to_be_used, sub_window_parts, sub_window_state_indexes_to_be_used);
 		sub_window_state(sub_window_state_indexes(non_zero_result_indexes)) = subwindow_results(non_zero_result_indexes);
 
 		if (strcmp(MODE, 'PATTERN_MODE'))
