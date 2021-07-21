@@ -1,5 +1,7 @@
 *.sublime-*
 s.m
 *Wrong.*
-images/**/
+/images/**/
+!/images/TrainingSet/
+!/images/TestSet/
 octave-workspace
